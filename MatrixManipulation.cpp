@@ -4,16 +4,14 @@
 using namespace MatrixUtil;
 
 template <typename T>
-Matrix<T>::Matrix() {
-	Matrix::mValues;
+Matrix<T>::Matrix() : values() {
 }
 
 
 template <typename T>
-Matrix<T>::Matrix(const vector<vector<T> > values) {
-	Matrix::mValues = values;
+Matrix<T>::Matrix(const vector<vector<T> > values) : values(values) {
+	
 }
-
 template <typename T>
 Matrix<T>& MatrixManipulation<T>::operator*(const Matrix<T>& operand) 
 {
@@ -22,7 +20,7 @@ Matrix<T>& MatrixManipulation<T>::operator*(const Matrix<T>& operand)
 	bool done = false;
 	for (int i = 0; i < this.getRows; i++) {
 		
-		for (int j = 0; j < operand.getRows; j++) {
+		for (int j = 0; j < this.getRows; j++) {
 			T sum;
 			for (int k = 0; k < operand.getColumns; k++)
 				sum += this.mValues[j][k] * operand[k][j];
@@ -31,8 +29,6 @@ Matrix<T>& MatrixManipulation<T>::operator*(const Matrix<T>& operand)
 			sum = 0;
 		
 		}
-
-
 		
 	}
 
@@ -45,7 +41,7 @@ vector<T>& MatrixManipulation<T>::operator[](const int i) {
 }
 
 template <typename T>
-ostream& MatrixManipulation<T>::operator<<(ostream& stream, const Matrix<T>& operand) {
+ostream& MatrixManipulation<T>::operator<<(const Matrix<T>& operand) {
 	cout << "[";
 	for (int i = 0; i < *operand.getRows; i++) {
 		cout << "[";
@@ -57,17 +53,19 @@ ostream& MatrixManipulation<T>::operator<<(ostream& stream, const Matrix<T>& ope
 
 	cout << "]";
 
-	return stream;
+	return cout;
 }
 
 template <typename T>
 vector<vector<T> >& Matrix<T>::getData() {
 	return Matrix<T>::mValues;
 }
+
 template <typename T>
 int Matrix<T>::getRows() {
 	return Matrix<T>::mValues.size;
 }
+
 template <typename T>
 int Matrix<T>::getColumns() {
 	return Matrix<T>::mValues[0].size;
