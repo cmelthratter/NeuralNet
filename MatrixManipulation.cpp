@@ -2,82 +2,99 @@
 #include <vector>
 #include <iostream>
 using namespace MatrixUtil;
-
+using namespace std;
+using std::ostream;
 template <typename T>
 Matrix<T>::Matrix() : values() {
 }
 
 
 template <typename T>
-Matrix<T>::Matrix(const vector<vector<T> > values) : values(values) {
+Matrix<T>::Matrix(vector<vector<T> >& mValues) : values(mValues) {
 	
 }
 template <typename T>
-Matrix<T>& MatrixManipulation<T>::operator*(const Matrix<T>& operand) 
+Matrix<T> Matrix<T>::operator*(Matrix<T>& operand) 
 {
-	vector<vector<T> > newData;
+	vector<vector<T> > newData (this->getRows());
+	cout << "hello " << operand << "\n";
+	for (int i = 0; i < this->getRows(); i++) {
 
-	bool done = false;
-	for (int i = 0; i < this.getRows; i++) {
-		
-		for (int j = 0; j < this.getRows; j++) {
-			T sum;
-			for (int k = 0; k < operand.getColumns; k++)
-				sum += this.mValues[j][k] * operand[k][j];
+		cout<<"first loop " << this->getRows() <<"\n";
+		for (int j = 0; j < this->getRows(); j++) {
+			T sum{};
+			cout<<"second loop\n";
+			for (int k = 0; k < operand.getColumns(); k++) {
+				cout<<"third loop " << operand.getColumns() << "\n";
+				sum += this->values[i][k] * operand[k][j];
+				cout << sum << "\n";
+			}
 
-			newData[i][j] = sum;
-			sum = 0;
-		
+			newData[i].push_back(sum);
+			cout<<"done with second\n";
 		}
 		
 	}
 
-	return new Matrix<T>(newData);
+	
+	cout <<"balls\n";
+	return Matrix<T>(newData);
 }
 
 template <typename T>
-vector<T>& MatrixManipulation<T>::operator[](const int i) {
-	return Matrix<T>::mValues[i];
+void MatrixManipulation<T>::addRow(vector<T> row) {
+	this->values.push_back(row);
 }
 
 template <typename T>
-ostream& MatrixManipulation<T>::operator<<(const Matrix<T>& operand) {
-	cout << "[";
-	for (int i = 0; i < *operand.getRows; i++) {
-		cout << "[";
-		for (int j = 0; j < *operand.getColumns; j++) {
-			cout << *operand[i][j];
+void MatrixManipulation<T>::add(T value) {
+	this->values.back.push_back(value);
+}
+
+template <typename T>
+vector<T>& Matrix<T>::operator[](int i){
+	return Matrix<T>::values[i];
+}
+
+template <typename T>
+ostream& operator<<(ostream& os, Matrix<T>& operand) {
+	os << "[";
+	for (int i = 0; i < operand.getRows(); i++) {
+		os << "[";
+		for (int j = 0; j < operand.getColumns(); j++) {
+			os << operand[i][j] << " ";
 		}
-		cout << "]";
+		if (i != operand.getRows() - 1) os << "]\n";
+		else os <<"]";
 	}
 
-	cout << "]";
+	os << "]\n";
 
-	return cout;
+	return os;
 }
 
 template <typename T>
-vector<vector<T> >& Matrix<T>::getData() {
-	return Matrix<T>::mValues;
+vector<vector<T> >& Matrix<T>::getData(){
+	return this->values;
 }
 
 template <typename T>
-int Matrix<T>::getRows() {
-	return Matrix<T>::mValues.size;
+int Matrix<T>::getRows() const {
+	return (int) this->values.size();
 }
 
 template <typename T>
-int Matrix<T>::getColumns() {
-	return Matrix<T>::mValues[0].size;
+int Matrix<T>::getColumns() const {
+	return (int) this->values[0].size();
 }
 
 
 template <typename T>
 Matrix<T>& MatrixManipulation<T>::transpose() {
 	vector<vector<T> > matrix;
-	for (int i = 0; i < this.mValues.size; i++) {
-		for (int j = 0; j < this.mValues[0].size; j++) {
-			matrix[j][i] = this.mValues[i][j];
+	for (int i = 0; i < this.getRows(); i++) {
+		for (int j = 0; j < this.getColumns(); j++) {
+			matrix[j][i] = this[i][j];
 		}
 	}
 

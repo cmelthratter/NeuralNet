@@ -1,32 +1,40 @@
-
+#ifndef MATRIXMANIPULATION_H
+#define MATRIXMANIPULATION_H
 #include <vector>
 #include <iostream>
 
 namespace MatrixUtil {
 
 	using namespace std;
+	using std::ostream;
 
 
 	template <typename T> 
 	class Matrix {
 
 	public:
-		Matrix(const vector<vector<T> > values);
+		Matrix(vector<vector<T> >& mValues);
 
 		Matrix();
 
-		int getColumns();
+		int getColumns() const;
 
-		int getRows();
+		int getRows() const;
 
 		vector<vector<T> >& getData();
 
+		vector<T>& operator[](int i);
+
+		Matrix<T> operator*(Matrix<T>& operand);
+
+
+
+		
 
 
 	private:
 
 		vector<vector<T> > values;
-
 
 	};
 
@@ -35,11 +43,11 @@ namespace MatrixUtil {
 
 		Matrix<T>& transpose();
 
-		std::ostream& operator<<(const Matrix<T>& operand);
+		friend ostream& operator<< <>(ostream& os, Matrix<T>& operand);
 
-		Matrix<T>& operator*(const Matrix<T>& operand);
+		void add(T value);
 
-		vector<T>& operator[](const int i);
+		void addRow(const vector<T> row);
 
 	private:
 
@@ -47,3 +55,5 @@ namespace MatrixUtil {
 
 
 }
+
+#endif
