@@ -49,37 +49,7 @@ struct Layer
 
 };
 
-const char* help_string = "-lr :\t specifies a learning rate in place of the default (.25)\n-t :\tspecifies a file path for training data in place of default\n-q :\tspecifies a file path for the data in which to query the Neural Network with\n-? :\tdisplay this text";
-float learningRate = 0.25f;
-int main(int argc, char** args) 
-{
-	char* trainingDataFilePath = (char*) malloc(257);
-	char* dataFilePath = (char*) malloc(257);
 
-	strcpy (trainingDataFilePath, DEFAULT_TRAINING_DATA_PATH);
-	strcpy (dataFilePath, DEFAULT_DATA_PATH);
-	for (int i = 0; i < argc; i++) {
-		char* arg = args[i];
-		if (arg[0] == '-') {
-			if (strcmp(arg, "-lr")) 
-				learningRate = atoi(args[i + 1]);
-			
-			else if (strcmp(arg, "-t"))	
-					strcpy(trainingDataFilePath, trainingDataFilePath args[i + 1]);
-			
-			else if (strcmp(arg, "-q"))
-					strcpy(dataFilePath, args[i + 1]);
-
-		} else continue;
-	}
-	
-	Layer<float> inputLayer {};
-	Layer<float> hiddenLayer {};
-	Layer<float> outputLayer {};
-	NeuralNetwork net(inputLayer, hiddenLayer, outputLayer, learningRate);
-	net.init();
-	net.train();
-}
 
 
 class NeuralNetwork
@@ -209,4 +179,36 @@ private:
 
 
 };
+
+const char* help_string = "-lr :\t specifies a learning rate in place of the default (0.25)\n-t :\tspecifies a file path for training data in place of default\n-q :\tspecifies a file path for the data in which to query the Neural Network with\n-? :\tdisplay this text";
+float learningRate = 0.25f;
+int main(int argc, char** args) 
+{
+	char* trainingDataFilePath = (char*) malloc(257);
+	char* dataFilePath = (char*) malloc(257);
+
+	strcpy (trainingDataFilePath, DEFAULT_TRAINING_DATA_PATH);
+	strcpy (dataFilePath, DEFAULT_DATA_PATH);
+	for (int i = 0; i < argc; i++) {
+		char* arg = args[i];
+		if (arg[0] == '-') {
+			if (strcmp(arg, "-lr")) 
+				learningRate = atoi(args[i + 1]);
+			
+			else if (strcmp(arg, "-t"))	
+					strcpy(trainingDataFilePath, args[i + 1]);
+			
+			else if (strcmp(arg, "-q"))
+					strcpy(dataFilePath, args[i + 1]);
+
+		} else continue;
+	}
+	
+	Layer<float> inputLayer {};
+	Layer<float> hiddenLayer {};
+	Layer<float> outputLayer {};
+	NeuralNetwork net(inputLayer, hiddenLayer, outputLayer, learningRate);
+	net.init();
+	net.train();
+}
 
