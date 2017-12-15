@@ -29,7 +29,7 @@ using namespace MatrixUtil;
 
 
 	//default training data file
-const char *DEFAULT_TRAINING_DATA_PATH = "mnist.train.csv";
+const char *DEFAULT_TRAINING_DATA_PATH = "mnist_train.csv";
 const char *DEFAULT_DATA_PATH = "mnist_test.csv";
 
 
@@ -72,11 +72,13 @@ public:
 		populateWeightMatrix();
 	}
 
-	void setDataFilePath(char* filePath) {
+	void setDataFilePath(const char* filePath) {
+		this->dataFilePath = (char*) malloc(sizeof(filePath));
 		strcpy (this->dataFilePath, filePath);
 	}
 
-	void setTrainingDataFilePath(char* filePath) {
+	void setTrainingDataFilePath(const char* filePath) {
+		this->trainingFilePath = (char*) malloc(sizeof(filePath));
 		strcpy(this->trainingFilePath, filePath);
 	}
 
@@ -100,7 +102,7 @@ private:
 	Matrix<float> inputToHiddenLinks;
 	Matrix<float> hiddenToOutputLinks;
 
-	vector<int> trainingAnswers {};//holds the answer to each sample of data
+	
 	
 	float learningRate;
 
@@ -110,37 +112,42 @@ private:
 
 	//populates all the layer with training data
 	void populateInputLayerTraining() {
-		if (!trainingFile.is_open()) cout << "Training file is not open\n";
+		if (!trainingFile.is_open()) openTrainingFile();
+		cout << trainingFilePath << '\n';
 		cout << "reading training data...\n";
-		while(!trainingFile.eof())
-		{
+		//while(!trainingFile.eof())
+		//{
 			char *line = (char*) malloc (sizeof(char*) * 1025);//1024 + 1 for null terminator
 			trainingFile.getline(line, 1024);//read a line into the cstring
 			parseTrainingDataLine(line);
-		}
+		//}
 		cout << "Sucessful\n";
 
 	}
 
 
 	//parses one line of data from the training file, and inserts it into the input layer
-	void parseTrainingDataLine(const char* line) 
-	{	
+	//return: a vector containing the answer for each line.
+	vector<int> parseTrainingDataLine(const char* line) 
+	{	 
 		cout << "parsing training data\n";
+		cout << *line << '\n';
 		char* lineCopy = (char*) malloc (sizeof(line));
 		strcpy(lineCopy, line);
 
-		trainingAnswers.push_back(stoi(strtok(lineCopy, ",")));
-		char *token = (char*) malloc(4);
+		vector<int> trainingAnswers;
 
-		 while (token != NULL)
-		  {
-		    inputLayer.addValue(stoi(token));
-		    strcpy(token, strtok(lineCopy, ","));
-		  }
+		char *token = (char*) malloc(65);
+		token = strsep(&lineCopy, ",");
+		trainingAnswers.push_back(atoi(token));
+		 while ((token = strsep(&lineCopy, ",")) != NULL)
+		 {
+		  	cout << *token << "\n";
+		    inputLayer.addValue(atoi(token));
+		 }
 
-		free (lineCopy);
-		free (token);
+
+		return trainingAnswers;
 	}	
 
 	void parseDataLine(char* line)
@@ -203,11 +210,13 @@ int main(int argc, char** args)
 
 		} else continue;
 	}
-	
+	cout << trainingDataFilePath << '\n';
 	Layer<float> inputLayer {};
 	Layer<float> hiddenLayer {};
 	Layer<float> outputLayer {};
 	NeuralNetwork net(inputLayer, hiddenLayer, outputLayer, learningRate);
+	net.setTrainingDataFilePath(trainingDataFilePath);
+	net.setDataFilePath(dataFilePath);
 	net.init();
 	net.train();
 }
