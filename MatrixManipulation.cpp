@@ -42,13 +42,13 @@ Matrix<T> Matrix<T>::operator*(Matrix<T>& operand)
 }
 
 template <typename T>
-void MatrixManipulation<T>::addRow(vector<T> row) {
+void Matrix<T>::addRow(vector<T> row) {
 	this->values.push_back(row);
 }
 
 template <typename T>
-void MatrixManipulation<T>::add(T value) {
-	this->values.back.push_back(value);
+void Matrix<T>::add(T value) {
+	this->values.back().push_back(value);
 }
 
 template <typename T>

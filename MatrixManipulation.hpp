@@ -27,6 +27,9 @@ namespace MatrixUtil {
 
 		Matrix<T> operator*(Matrix<T>& operand);
 
+		void add(T value);
+
+		void addRow(const vector<T> row);
 
 
 		
@@ -44,10 +47,6 @@ namespace MatrixUtil {
 		Matrix<T>& transpose();
 
 		friend ostream& operator<< <>(ostream& os, Matrix<T>& operand);
-
-		void add(T value);
-
-		void addRow(const vector<T> row);
 
 	private:
 
