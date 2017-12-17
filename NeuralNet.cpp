@@ -10,18 +10,17 @@
 
 /**
 -----------------------TODO-------------------------------------------------------------------------------------------
-- IMPLEMENT TRAINING DATA FILE PARSING - MEDIUM -TESTING
+- IMPLEMENT TRAINING DATA FILE PARSING - MEDIUM - DONE
 - IMPLEMENT DATA FILE PARSING - MEDIUM -
-- IMPLEMENT WEIGHT MATRIX POPULATION - EASY - TESTING
+- IMPLEMENT WEIGHT MATRIX POPULATION - EASY - DONE
 - IMPLEMENT INPUT LAYER POPULATION - EASY - DONE
-- IMPLEMENT HIDDEN LAYER POPULATION - HARD
-- IMPLEMENT OUTPUT LAYER POPULATION - HARD
-- IMPLEMENT LAYER CALCULATION - HARD
+- IMPLEMENT HIDDEN LAYER POPULATION - HARD - TESTING
+- IMPLEMENT OUTPUT LAYER POPULATION - HARD - TESTING
 - IMPLEMENT SIGMOID FUNCTION - HARD
 - IMPLEMENT WEIGHT CORRECTION BACK PROPOGATION - HARD
-- IMPLEMENT ERROR CALCULATION FUNCITON - HARD
-- IMPLEMENT LOGGING - EASY
-- IMPLEMENT COMMAND LINE ARGUMENT PARSING
+- IMPLEMENT ERROR CALCULATION FUNCTION - HARD
+- IMPLEMENT LOGGING - EASY - ONGOING
+- IMPLEMENT COMMAND LINE ARGUMENT PARSING - TESTING
 ----------------------------------------------------------------------------------------------------------------------
 */
 class NeuralNetwork;
@@ -42,12 +41,13 @@ public:
 	NeuralNetwork(int numberOfInputNodes,
 				  int numberOfHiddenNodes,
 				  int numberOfOutputNodes,
-				  float newLearningRate) : inputLayerNodes(numberOfInputNodes),
-										   hiddenLayerNodes(numberOfHiddenNodes),
-										   outputLayerNodes(numberOfOutputNodes),
+				  float newLearningRate) : inputLayer(1, numberOfInputNodes),
+										   hiddenNodes(numberOfHiddenNodes),
+										   outputNodes(numberOfOutputNodes),
 										   learningRate(newLearningRate)
 
 	{
+
 	}
 
 	void init() {
@@ -71,45 +71,31 @@ public:
 	{
 		this->init();
 		cout << "Initiating training procedure \n";
+		calculateHiddenLayer();
+		calculateOutputLayer();
+		cout << "The Neural Network says... " << getCorrectLabel() << " !\n";
+		calculateErrorValeus();
+		backPropogateErrorValues();
 
 	}
 
 	void query()
 	{
-
+		this->init();
+		cout << "Querying the Neural Network...\n";
+		calculateHiddenLayer();
+		calculateOutputLayer();
+		cout << "The Neural Network says... " << getCorrectLabel() << " !\n";
 	}
 
-	void printNeuralNetwork() {
-		cout << "INPUT LAYER:\n";
-		cout << inputLayer;
 
-		cout << "INPUT TO HIDDEN WEIGHT MATRIX:\n";
-		cout << inputToHiddenLinks;
-		cout << "HIDDEN LAYER:\n";
-		cout << hiddenLayer;
-		cout << "HIDDEN TO OUTPUT WEIGHT MATRIX:\n";
-		cout << hiddenToOutputLinks;
-		cout << "OUTPUT LAYER:\n";
-		cout << outputLayer;
-
-
-		
-	}
-
-	void printVector(vector<float> v) {
-		cout << "[ ";
-		for (int i = 0; i < v.size() - 1; i++) {
-			cout << v[i] << ", ";
-		}
-		cout << v.back() << "] \n";
+	friend ostream& operator<<(ostream& os, NeuralNetwork& operand) {
+		operand.printNeuralNetwork();
+		return os;
 	}
 
 
 private:
-
-	int inputLayerNodes;
-	int hiddenLayerNodes;
-	int outputLayerNodes;
 
 	Matrix<float> inputLayer;
 	Matrix<float> hiddenLayer;
@@ -118,6 +104,9 @@ private:
 	Matrix<float> hiddenToOutputLinks;
 
 	vector<int> trainingAnswers;
+
+	int hiddenNodes;
+	int outputNodes;
 	
 	float learningRate;
 
@@ -132,24 +121,50 @@ private:
 		//{
 			string line;
 			std::getline(trainingFile, line);//read a line into the cstring
-			trainingAnswers.push_back(parseTrainingDataLine(line));
+			int thisAnswer = parseTrainingDataLine(line);
+			trainingAnswers.push_back(thisAnswer);
 		//}
 		cout << "Successful\n";
 
 	}
+
+	void calculateHiddenLayer() {
+		cout << "Calculating hidden layer\n";
+		this->hiddenLayer = (inputLayer * inputToHiddenLinks);
+	}
+
+	void calculateOutputLayer() {
+		cout << "Calculating output layer\n";
+		this->outputLayer = (hiddenLayer * hiddenToOutputLinks);
+	}
+
+	int getCorrectLabel() {
+		float max = 0.0F;
+		for (int i = 0; i < outputLayer.getColumns(); i++) {
+			if (outputLayer[0][i] > max) max = outputLayer[0][i];
+		}
+
+		return max;
+	}
+	//TODO
+	void calculateErrorValeus() {}
+	//TODO
+	void backPropogateErrorValues() {}
 
 
 	//parses one line of data from the training file, and inserts it into the input layer
 	//return: the number displayed by the pixel data in this line.
 	int parseTrainingDataLine(string line) 
 	{	 
+		cout << "parsing training data\n";
 
 		int trainingAnswer = -1;
 		string token = "";
 		for (int i = 0; i < line.length(); i++) {
 			if (line[i] != ',') token += line[i];
 			else {
-				inputLayer.push_back(normalizeValue(stoi(token)));
+				float normalizedValue = normalizeValue(stoi(token));
+				inputLayer.add(normalizedValue);
 				token = "";
 			}
 		}
@@ -171,20 +186,23 @@ private:
 	//populates the weight value matrix with random normalized values
 	void populateWeightMatrix()
 	{
-		std::srand(std::time(nullptr));
-		for (int i = 0; i < this->inputLayer.capacity(); i++) {
-			vector<float> row(this->hiddenLayer.capacity());
-			for (int j = 0; j < this->hiddenLayer.capacity(); j++) {
+		cout << "populating weight matrix\n";
+		cout << "inputLayer: rows: " << this->inputLayer.getRows() << " columns: " << this->inputLayer.getColumns() << "\n";
+		srand(time(nullptr));
+		for (int i = 0; i < this->inputLayer.getColumns(); i++) {
+			vector<float> row(this->hiddenNodes - 1);
+			for (int j = 0; j < this->hiddenNodes; j++) {
 				float rand = getRandomFloat();
 				row[j] = rand;
 			}
 
 			this->inputToHiddenLinks.addRow(row);
 		}
+		cout << "rows: " << this->inputToHiddenLinks.getRows() << ", columns: " << this->inputToHiddenLinks.getColumns() << '\n';
 
-		for (int i = 0; i < this->hiddenLayer.capacity(); i++) {
-			vector<float> row(this->outputLayer.capacity());
-			for (int j = 0; j < this->outputLayer.capacity(); j++) {
+		for (int i = 0; i < this->hiddenNodes - 1; i++) {
+			vector<float> row(this->outputNodes - 1);
+			for (int j = 0; j < this->outputNodes - 1; j++) {
 				float rand = getRandomFloat();
 				row[j] = rand;
 			}
@@ -192,6 +210,7 @@ private:
 			this->hiddenToOutputLinks.addRow(row);
 
 		}
+		cout << "rows: " << this->hiddenToOutputLinks.getRows() << ", columns: " << this->hiddenToOutputLinks.getColumns() << '\n';
 
 	}	
 	//returns a float between .01 and .99 for the weight matrix
@@ -207,8 +226,26 @@ private:
 		return (float) (((value / 255.0F) * .99F) + .01F) ;
 	}	
 
+	void printNeuralNetwork() {
+		cout << "INPUT LAYER:\n";
+		cout << inputLayer;
+
+		cout << "INPUT TO HIDDEN WEIGHT MATRIX:\n";
+		cout << inputToHiddenLinks;
+		cout << "HIDDEN LAYER:\n";
+		cout << hiddenLayer;
+		cout << "HIDDEN TO OUTPUT WEIGHT MATRIX:\n";
+		cout << hiddenToOutputLinks;
+		cout << "OUTPUT LAYER:\n";
+		cout << outputLayer;
+		
+	}
+
+	
 
 };
+
+
 
 const char* help_string = "-lr :\t specifies a learning rate in place of the default (0.25)\n-t :\tspecifies a file path for training data in place of default\n-q :\tspecifies a file path for the data in which to query the Neural Network with\n-? :\tdisplay this text";
 float learningRate = 0.25f;

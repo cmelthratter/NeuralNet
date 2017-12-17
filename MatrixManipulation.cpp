@@ -5,40 +5,53 @@ using namespace MatrixUtil;
 using namespace std;
 using std::ostream;
 template <typename T>
-Matrix<T>::Matrix() : values() {
+Matrix<T>::Matrix(int rows, int columns) : values(rows, vector<T>(columns)) 
+{
+
 }
 
+template<typename T>
+Matrix<T>::Matrix() : values(1, vector<T>(1)) 
+{
+
+}
 
 template <typename T>
-Matrix<T>::Matrix(vector<vector<T> >& mValues) : values(mValues) {
+Matrix<T>::Matrix(vector<vector<T> >& nValues) : values(nValues)
+{
 	
 }
-template <typename T>
-Matrix<T> Matrix<T>::operator*(Matrix<T>& operand) 
+
+template<typename T>
+Matrix<T>::Matrix(Matrix<T>& matrix) : Matrix(matrix.getData()) 
 {
+
+}
+
+template <typename T>
+Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand) 
+{
+	if(this->getColumns() != operand.getRows())  {
+		cout << "ERROR: MATRICES ARE INCOMPATIBLE (A Columns =  " << this->getColumns() << ", B Rows: " << operand.getRows() << ")\n";
+		Matrix<T> newMatrix(0, 0);
+		return newMatrix;
+	}
 	vector<vector<T> > newData (this->getRows());
-	cout << "hello " << operand << "\n";
 	for (int i = 0; i < this->getRows(); i++) {
 
-		cout<<"first loop " << this->getRows() <<"\n";
 		for (int j = 0; j < this->getRows(); j++) {
 			T sum{};
-			cout<<"second loop\n";
 			for (int k = 0; k < operand.getColumns(); k++) {
-				cout<<"third loop " << operand.getColumns() << "\n";
 				sum += this->values[i][k] * operand[k][j];
 				cout << sum << "\n";
 			}
 
 			newData[i].push_back(sum);
-			cout<<"done with second\n";
 		}
 		
 	}
-
-	
-	cout <<"balls\n";
-	return Matrix<T>(newData);
+	Matrix<T> newMatrix(newData);
+	return newMatrix;
 }
 
 template <typename T>

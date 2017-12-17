@@ -15,7 +15,9 @@ namespace MatrixUtil {
 	public:
 		Matrix(vector<vector<T> >& mValues);
 
+		Matrix(int rows, int columns);
 		Matrix();
+		Matrix(Matrix<T>& matrix);
 
 		int getColumns() const;
 
