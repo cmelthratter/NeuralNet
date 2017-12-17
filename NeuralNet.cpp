@@ -212,7 +212,7 @@ private:
 				float rand = getRandomFloat();
 				row[k] = rand;
 			}
-			this->hiddenToOutputLinks.addRow(row);
+			this->hiddenToOutputLinks[i] = row;
 
 		}
 		cout << "rows: " << this->hiddenToOutputLinks.getRows() << ", columns: " << this->hiddenToOutputLinks.getColumns() << '\n';

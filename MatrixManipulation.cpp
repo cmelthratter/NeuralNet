@@ -41,7 +41,7 @@ Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand)
 
 		for (int j = 0; j < operand.getColumns(); j++) {
 			T sum{};
-			for (int k = 0; k < operand.getColumns(); k++) {
+			for (int k = 0; k < operand.getRows(); k++) {
 				sum += this->values[i][k] * operand[k][j];
 			}
 
