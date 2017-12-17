@@ -31,6 +31,7 @@ namespace MatrixUtil {
 
 		void add(T value);
 
+
 		void addRow(const vector<T> row);
 
 
@@ -40,6 +41,8 @@ namespace MatrixUtil {
 	private:
 
 		vector<vector<T> > values;
+		int mRows;
+		int mColumns;
 
 	};
 

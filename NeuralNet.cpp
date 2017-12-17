@@ -42,12 +42,16 @@ public:
 				  int numberOfHiddenNodes,
 				  int numberOfOutputNodes,
 				  float newLearningRate) : inputLayer(1, numberOfInputNodes),
+										   inputToHiddenLinks(numberOfInputNodes, numberOfHiddenNodes),
+										   hiddenLayer(1, numberOfHiddenNodes),
+										   hiddenToOutputLinks(numberOfHiddenNodes, numberOfOutputNodes),
+										   outputLayer(1, numberOfOutputNodes),
 										   hiddenNodes(numberOfHiddenNodes),
 										   outputNodes(numberOfOutputNodes),
 										   learningRate(newLearningRate)
 
 	{
-
+		cout << "Created new NeuralNetwork\n";
 	}
 
 	void init() {
@@ -105,6 +109,7 @@ private:
 
 	vector<int> trainingAnswers;
 
+	int inputNodes;
 	int hiddenNodes;
 	int outputNodes;
 	
@@ -120,7 +125,7 @@ private:
 		//while(!trainingFile.eof())
 		//{
 			string line;
-			std::getline(trainingFile, line);//read a line into the cstring
+			std::getline(trainingFile, line);//read a line into the string
 			int thisAnswer = parseTrainingDataLine(line);
 			trainingAnswers.push_back(thisAnswer);
 		//}
@@ -156,15 +161,17 @@ private:
 	//return: the number displayed by the pixel data in this line.
 	int parseTrainingDataLine(string line) 
 	{	 
-		cout << "parsing training data\n";
+		cout << "parsing training data: " << line.length() << "\n";
 
 		int trainingAnswer = -1;
 		string token = "";
-		for (int i = 0; i < line.length(); i++) {
+		int tokenCount = 0;
+		for (int i = 2; i < line.length(); i++) {
+
 			if (line[i] != ',') token += line[i];
 			else {
 				float normalizedValue = normalizeValue(stoi(token));
-				inputLayer.add(normalizedValue);
+				this->inputLayer[0][tokenCount++] = normalizedValue; 
 				token = "";
 			}
 		}
@@ -187,26 +194,24 @@ private:
 	void populateWeightMatrix()
 	{
 		cout << "populating weight matrix\n";
-		cout << "inputLayer: rows: " << this->inputLayer.getRows() << " columns: " << this->inputLayer.getColumns() << "\n";
 		srand(time(nullptr));
 		for (int i = 0; i < this->inputLayer.getColumns(); i++) {
-			vector<float> row(this->hiddenNodes - 1);
-			for (int j = 0; j < this->hiddenNodes; j++) {
+			vector<float> row(this->hiddenLayer.getColumns());
+			for (int j = 0; j < this->hiddenLayer.getColumns(); j++) {
+
 				float rand = getRandomFloat();
 				row[j] = rand;
 			}
-
-			this->inputToHiddenLinks.addRow(row);
+			this->inputToHiddenLinks[i] = row;
 		}
+
 		cout << "rows: " << this->inputToHiddenLinks.getRows() << ", columns: " << this->inputToHiddenLinks.getColumns() << '\n';
-
-		for (int i = 0; i < this->hiddenNodes - 1; i++) {
-			vector<float> row(this->outputNodes - 1);
-			for (int j = 0; j < this->outputNodes - 1; j++) {
+		for (int i = 0; i < this->hiddenNodes ; i++) {
+			vector<float> row(this->outputNodes);
+			for (int k = 0; k < this->outputNodes ; k++) {
 				float rand = getRandomFloat();
-				row[j] = rand;
+				row[k] = rand;
 			}
-
 			this->hiddenToOutputLinks.addRow(row);
 
 		}
@@ -215,6 +220,7 @@ private:
 	}	
 	//returns a float between .01 and .99 for the weight matrix
 	static float getRandomFloat() {
+		srand(time(nullptr));
 		int randInt = (std::rand() % 99);
 		float rand = (float) (randInt / 100.0F) + 0.01F;
 		return rand;
@@ -271,6 +277,7 @@ int main(int argc, char** args)
 		} else continue;
 	}
 	NeuralNetwork net(784, 100, 10, learningRate);
+
 	net.setTrainingDataFilePath(trainingDataFilePath);
 	net.setDataFilePath(dataFilePath);
 	net.train();

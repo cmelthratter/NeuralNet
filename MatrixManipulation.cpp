@@ -5,25 +5,25 @@ using namespace MatrixUtil;
 using namespace std;
 using std::ostream;
 template <typename T>
-Matrix<T>::Matrix(int rows, int columns) : values(rows, vector<T>(columns)) 
+Matrix<T>::Matrix(int rows, int columns) : values(rows, vector<T>(columns)), mRows(rows), mColumns(columns) 
 {
 
 }
 
 template<typename T>
-Matrix<T>::Matrix() : values(1, vector<T>(1)) 
+Matrix<T>::Matrix() : values(1, vector<T>(1)), mRows(1), mColumns(1) 
 {
 
 }
 
 template <typename T>
-Matrix<T>::Matrix(vector<vector<T> >& nValues) : values(nValues)
+Matrix<T>::Matrix(vector<vector<T> >& nValues) : values(nValues), mRows(nValues.size()), mColumns(nValues[0].size())
 {
 	
 }
 
 template<typename T>
-Matrix<T>::Matrix(Matrix<T>& matrix) : Matrix(matrix.getData()) 
+Matrix<T>::Matrix(Matrix<T>& matrix) : values(matrix.getData()) , mRows(matrix.getRows()), mColumns(matrix.getColumns())
 {
 
 }
@@ -36,29 +36,28 @@ Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand)
 		Matrix<T> newMatrix(0, 0);
 		return newMatrix;
 	}
-	vector<vector<T> > newData (this->getRows());
+	vector<vector<T> > newData (this->getRows(), vector<T>(operand.getColumns()));
 	for (int i = 0; i < this->getRows(); i++) {
 
-		for (int j = 0; j < this->getRows(); j++) {
+		for (int j = 0; j < operand.getColumns(); j++) {
 			T sum{};
 			for (int k = 0; k < operand.getColumns(); k++) {
 				sum += this->values[i][k] * operand[k][j];
-				cout << sum << "\n";
 			}
 
-			newData[i].push_back(sum);
+			newData[i][j] = sum;
 		}
 		
 	}
 	Matrix<T> newMatrix(newData);
 	return newMatrix;
 }
-
+//add a row to the
 template <typename T>
 void Matrix<T>::addRow(vector<T> row) {
 	this->values.push_back(row);
 }
-
+//add a value to the end of the two matrix
 template <typename T>
 void Matrix<T>::add(T value) {
 	this->values.back().push_back(value);
@@ -93,12 +92,12 @@ vector<vector<T> >& Matrix<T>::getData(){
 
 template <typename T>
 int Matrix<T>::getRows() const {
-	return (int) this->values.size();
+	return (int) this->mRows;
 }
 
 template <typename T>
 int Matrix<T>::getColumns() const {
-	return (int) this->values[0].size();
+	return (int) this->mColumns;
 }
 
 
