@@ -31,17 +31,21 @@ Matrix<T>::Matrix(Matrix<T>& matrix) : values(matrix.getData()) , mRows(matrix.g
 template <typename T>
 Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand) 
 {
-	if(this->getColumns() != operand.getRows())  {
+	if(this->getColumns() != operand.getRows())  
+	{
 		cout << "ERROR: MATRICES ARE INCOMPATIBLE (A Columns =  " << this->getColumns() << ", B Rows: " << operand.getRows() << ")\n";
 		Matrix<T> newMatrix(0, 0);
 		return newMatrix;
 	}
 	vector<vector<T> > newData (this->getRows(), vector<T>(operand.getColumns()));
-	for (int i = 0; i < this->getRows(); i++) {
+	for (int i = 0; i < this->getRows(); i++) 
+	{
 
-		for (int j = 0; j < operand.getColumns(); j++) {
+		for (int j = 0; j < operand.getColumns(); j++) 
+		{
 			T sum{};
-			for (int k = 0; k < operand.getRows(); k++) {
+			for (int k = 0; k < operand.getRows(); k++) 
+			{
 				sum += this->values[i][k] * operand[k][j];
 			}
 
@@ -54,26 +58,33 @@ Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand)
 }
 //add a row to the
 template <typename T>
-void Matrix<T>::addRow(vector<T> row) {
+void Matrix<T>::addRow(vector<T> row) 
+{
 	this->values.push_back(row);
+
 }
 //add a value to the end of the two matrix
 template <typename T>
-void Matrix<T>::add(T value) {
+void Matrix<T>::add(T value) 
+{
 	this->values.back().push_back(value);
 }
 
 template <typename T>
-vector<T>& Matrix<T>::operator[](int i){
+vector<T>& Matrix<T>::operator[](int i)
+{
 	return Matrix<T>::values[i];
 }
 
 template <typename T>
-ostream& operator<<(ostream& os, Matrix<T>& operand) {
+ostream& operator<<(ostream& os, Matrix<T>& operand) 
+{
 	os << "[";
-	for (int i = 0; i < operand.getRows(); i++) {
+	for (int i = 0; i < operand.getRows(); i++) 
+	{
 		os << "[";
-		for (int j = 0; j < operand.getColumns(); j++) {
+		for (int j = 0; j < operand.getColumns(); j++) 
+		{
 			os << operand[i][j] << " ";
 		}
 		if (i != operand.getRows() - 1) os << "]\n";
@@ -86,23 +97,27 @@ ostream& operator<<(ostream& os, Matrix<T>& operand) {
 }
 
 template <typename T>
-vector<vector<T> >& Matrix<T>::getData(){
+vector<vector<T> >& Matrix<T>::getData()
+{
 	return this->values;
 }
 
 template <typename T>
-int Matrix<T>::getRows() const {
+int Matrix<T>::getRows() const 
+{
 	return (int) this->mRows;
 }
 
 template <typename T>
-int Matrix<T>::getColumns() const {
+int Matrix<T>::getColumns() const 
+{
 	return (int) this->mColumns;
 }
 
 
 template <typename T>
-Matrix<T>& MatrixManipulation<T>::transpose() {
+Matrix<T>& MatrixManipulation<T>::transpose() 
+{
 	vector<vector<T> > matrix;
 	for (int i = 0; i < this.getRows(); i++) {
 		for (int j = 0; j < this.getColumns(); j++) {

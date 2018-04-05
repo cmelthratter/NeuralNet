@@ -51,21 +51,26 @@ public:
 										   learningRate(newLearningRate)
 
 	{
+		
+		srand(time(nullptr));
 		cout << "Created new NeuralNetwork\n";
 	}
 
-	void init() {
+	void init() 
+	{
 		cout << "Initiating NeuralNetwork\n";
 		populateInputLayerTraining();
 		populateWeightMatrix();
 	}
 
-	void setDataFilePath(const char* filePath) {
+	void setDataFilePath(const char* filePath) 
+	{
 		this->dataFilePath = (char*) malloc(sizeof(filePath));
 		strcpy (this->dataFilePath, filePath);
 	}
 
-	void setTrainingDataFilePath(const char* filePath) {
+	void setTrainingDataFilePath(const char* filePath) 
+	{
 		this->trainingFilePath = (char*) malloc(sizeof(filePath));
 		strcpy(this->trainingFilePath, filePath);
 	}
@@ -78,8 +83,8 @@ public:
 		calculateHiddenLayer();
 		calculateOutputLayer();
 		cout << "The Neural Network says... " << getCorrectLabel() << " !\n";
-		calculateErrorValeus();
-		backPropogateErrorValues();
+		//calculateErrorValeus();
+		//backPropogateErrorValues();
 
 	}
 
@@ -93,7 +98,8 @@ public:
 	}
 
 
-	friend ostream& operator<<(ostream& os, NeuralNetwork& operand) {
+	friend ostream& operator<<(ostream& os, NeuralNetwork& operand) 
+	{
 		operand.printNeuralNetwork();
 		return os;
 	}
@@ -120,7 +126,8 @@ private:
 	ifstream trainingFile;
 
 	//populates all the layer with training data
-	void populateInputLayerTraining() {
+	void populateInputLayerTraining() 
+	{
 		if (!trainingFile.is_open()) openTrainingFile();
 		//while(!trainingFile.eof())
 		//{
@@ -133,28 +140,37 @@ private:
 
 	}
 
-	void calculateHiddenLayer() {
+	void calculateHiddenLayer() 
+	{
 		cout << "Calculating hidden layer\n";
 		this->hiddenLayer = (inputLayer * inputToHiddenLinks);
 	}
 
-	void calculateOutputLayer() {
+	void calculateOutputLayer() 
+	{
 		cout << "Calculating output layer\n";
 		this->outputLayer = (hiddenLayer * hiddenToOutputLinks);
 	}
 
-	int getCorrectLabel() {
-		float max = 0.0F;
+	int getCorrectLabel() 
+	{
+		int max = 0;
 		for (int i = 0; i < outputLayer.getColumns(); i++) {
-			if (outputLayer[0][i] > max) max = outputLayer[0][i];
+			if (outputLayer[0][i] > max) max = i;
 		}
 
 		return max;
 	}
 	//TODO
-	void calculateErrorValeus() {}
+	void calculateErrorValues() 
+	{
+
+	}
 	//TODO
-	void backPropogateErrorValues() {}
+	void backPropogateErrorValues() 
+	{
+
+	}
 
 
 	//parses one line of data from the training file, and inserts it into the input layer
@@ -186,7 +202,8 @@ private:
 
 	}
 
-	void openTrainingFile() {
+	void openTrainingFile() 
+	{
 		trainingFile.open(trainingFilePath);
 	}
 
@@ -206,9 +223,11 @@ private:
 		}
 
 		cout << "rows: " << this->inputToHiddenLinks.getRows() << ", columns: " << this->inputToHiddenLinks.getColumns() << '\n';
-		for (int i = 0; i < this->hiddenNodes ; i++) {
+		for (int i = 0; i < this->hiddenNodes ; i++) 
+		{
 			vector<float> row(this->outputNodes);
-			for (int k = 0; k < this->outputNodes ; k++) {
+			for (int k = 0; k < this->outputNodes ; k++) 
+			{
 				float rand = getRandomFloat();
 				row[k] = rand;
 			}
@@ -219,8 +238,8 @@ private:
 
 	}	
 	//returns a float between .01 and .99 for the weight matrix
-	static float getRandomFloat() {
-		srand(time(nullptr));
+	static float getRandomFloat() 
+	{
 		int randInt = (std::rand() % 99);
 		float rand = (float) (randInt / 100.0F) + 0.01F;
 		return rand;
@@ -232,7 +251,8 @@ private:
 		return (float) (((value / 255.0F) * .99F) + .01F) ;
 	}	
 
-	void printNeuralNetwork() {
+	void printNeuralNetwork() 
+	{
 		cout << "INPUT LAYER:\n";
 		cout << inputLayer;
 
@@ -262,9 +282,11 @@ int main(int argc, char** args)
 
 	strcpy (trainingDataFilePath, DEFAULT_TRAINING_DATA_PATH);
 	strcpy (dataFilePath, DEFAULT_DATA_PATH);
-	for (int i = 0; i < argc; i++) {
+	for (int i = 0; i < argc; i++) 
+	{
 		char* arg = args[i];
-		if (arg[0] == '-') {
+		if (arg[0] == '-') 
+		{
 			if (strcmp(arg, "-lr")) 
 				learningRate = atoi(args[i + 1]);
 			
@@ -281,5 +303,6 @@ int main(int argc, char** args)
 	net.setTrainingDataFilePath(trainingDataFilePath);
 	net.setDataFilePath(dataFilePath);
 	net.train();
+	net.query();
 }
 
