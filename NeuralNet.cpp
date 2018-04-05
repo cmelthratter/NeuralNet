@@ -53,12 +53,12 @@ public:
 	{
 		
 		srand(time(nullptr));
-		cout << "Created new NeuralNetwork\n";
+		//cout << "Created new NeuralNetwork\n";
 	}
 
 	void init() 
 	{
-		cout << "Initiating NeuralNetwork\n";
+		//cout << "Initiating NeuralNetwork\n";
 		populateInputLayerTraining();
 		populateWeightMatrix();
 	}
@@ -79,7 +79,7 @@ public:
 	void train() 
 	{
 		this->init();
-		cout << "Initiating training procedure \n";
+		//cout << "Initiating training procedure \n";
 		calculateHiddenLayer();
 		calculateOutputLayer();
 		cout << "The Neural Network says... " << getCorrectLabel() << " !\n";
@@ -136,30 +136,35 @@ private:
 			int thisAnswer = parseTrainingDataLine(line);
 			trainingAnswers.push_back(thisAnswer);
 		//}
-		cout << "Successful\n";
+		//cout << "Successful\n";
 
 	}
 
 	void calculateHiddenLayer() 
 	{
-		cout << "Calculating hidden layer\n";
+		//cout << "Calculating hidden layer\n";
 		this->hiddenLayer = (inputLayer * inputToHiddenLinks);
 	}
 
 	void calculateOutputLayer() 
 	{
-		cout << "Calculating output layer\n";
+		//cout << "Calculating output layer\n";
 		this->outputLayer = (hiddenLayer * hiddenToOutputLinks);
 	}
 
 	int getCorrectLabel() 
 	{
-		int max = 0;
+		float max = 0;
+		int label = -1;
 		for (int i = 0; i < outputLayer.getColumns(); i++) {
-			if (outputLayer[0][i] > max) max = i;
+			if (outputLayer[0][i] > max) 
+				{
+					label = i;
+					max = outputLayer[0][i];
+				}
 		}
 
-		return max;
+		return label;
 	}
 	//TODO
 	void calculateErrorValues() 
@@ -177,10 +182,13 @@ private:
 	//return: the number displayed by the pixel data in this line.
 	int parseTrainingDataLine(string line) 
 	{	 
-		cout << "parsing training data: " << line.length() << "\n";
+		//cout << "parsing training data: " << line.length() << "\n";
 
-		int trainingAnswer = -1;
+		
 		string token = "";
+		token += line[0];
+		int trainingAnswer = stoi(token);
+		token = "";
 		int tokenCount = 0;
 		for (int i = 2; i < line.length(); i++) {
 
@@ -210,8 +218,7 @@ private:
 	//populates the weight value matrix with random normalized values
 	void populateWeightMatrix()
 	{
-		cout << "populating weight matrix\n";
-		srand(time(nullptr));
+		//cout << "populating weight matrix\n";
 		for (int i = 0; i < this->inputLayer.getColumns(); i++) {
 			vector<float> row(this->hiddenLayer.getColumns());
 			for (int j = 0; j < this->hiddenLayer.getColumns(); j++) {
@@ -222,7 +229,9 @@ private:
 			this->inputToHiddenLinks[i] = row;
 		}
 
-		cout << "rows: " << this->inputToHiddenLinks.getRows() << ", columns: " << this->inputToHiddenLinks.getColumns() << '\n';
+
+
+		//cout << "rows: " << this->inputToHiddenLinks.getRows() << ", columns: " << this->inputToHiddenLinks.getColumns() << '\n';
 		for (int i = 0; i < this->hiddenNodes ; i++) 
 		{
 			vector<float> row(this->outputNodes);
@@ -234,13 +243,13 @@ private:
 			this->hiddenToOutputLinks[i] = row;
 
 		}
-		cout << "rows: " << this->hiddenToOutputLinks.getRows() << ", columns: " << this->hiddenToOutputLinks.getColumns() << '\n';
+		//cout << "rows: " << this->hiddenToOutputLinks.getRows() << ", columns: " << this->hiddenToOutputLinks.getColumns() << '\n';
 
 	}	
 	//returns a float between .01 and .99 for the weight matrix
 	static float getRandomFloat() 
 	{
-		int randInt = (std::rand() % 99);
+		int randInt = (std::rand() % 100);
 		float rand = (float) (randInt / 100.0F) + 0.01F;
 		return rand;
 	}
