@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <cmath>
 
 
 /**
@@ -84,7 +85,6 @@ public:
 		calculateOutputLayer();
 		cout << "The Neural Network says... " << getCorrectLabel() << " !\n";
 		//calculateErrorValeus();
-		//backPropogateErrorValues();
 
 	}
 
@@ -114,6 +114,7 @@ private:
 	Matrix<float> hiddenToOutputLinks;
 
 	vector<int> trainingAnswers;
+	int currentAnswer;
 
 	int inputNodes;
 	int hiddenNodes;
@@ -144,12 +145,26 @@ private:
 	{
 		//cout << "Calculating hidden layer\n";
 		this->hiddenLayer = (inputLayer * inputToHiddenLinks);
+		for (int i = 0; i < this->hiddenLayer.getRows(); i++)
+		{
+			for (int j = 0; j < this->hiddenLayer.getColumns(); j++)
+			{
+				this->hiddenLayer[i][j] = sigmoid(this.hiddenLayer[i][j]);
+			}
+		}
 	}
 
 	void calculateOutputLayer() 
 	{
 		//cout << "Calculating output layer\n";
 		this->outputLayer = (hiddenLayer * hiddenToOutputLinks);
+		for (int i = 0; i < this->outputLayer.getRows(); i++)
+		{
+			for (int j = 0; j < this->outputLayer.getColumns(); j++)
+			{
+				this->outputLayer[i][j] = sigmoid(this.outputLayer[i][j]);
+			}
+		}
 	}
 
 	int getCorrectLabel() 
@@ -169,12 +184,38 @@ private:
 	//TODO
 	void calculateErrorValues() 
 	{
+		Matrix outputT = outputLayer.transpose();
+		Matrix e_row = outputLayer;
+		for (int i = 0; i < e_row.getRows(); i++)
+		{
+			for (int j = 0; j < e_row.getColumns(); j++ )
+			{
+				e_row[i][j] = currentAnswer - outputLayer[i][j];
+			}
+		}
 
+		for (int i = 0; i < hiddenToOutputLinks.getRows(); i++)
+		{
+			for (int j = 0; j < hiddenToutPutLinks.getColumns(); j++)
+			{
+				hiddenToOutputLinks[i][j] = learningRate * e_row[0][i] * sigmoid(outputLayer[0][i]) * (1 - sigmoid(outputLayer[0][i])) * outputT[i][0];
+			}
+		}
+
+		Matrix hiddenT = hiddenLayer.transpose();
+
+		for (int i = 0; i < inputToHiddenLinks.getRows(); i++)
+		{
+			for (int j = 0; j < inputToHiddenLinks.getColumns(); j++)
+			{
+				inputToHiddenLinks[i][j] = learningRate * e_row[0][i] * sigmoid(hiddenLayer[0][i]) * (1 - sigmoid(hiddenLayer[0][i])) * hiddenT[i][0];
+			}
+		}
 	}
-	//TODO
-	void backPropogateErrorValues() 
-	{
 
+	float sigmoid(float f)
+	{
+		return (float) pow((double) f, M_E) / (pow((double) f, M_E) + 1);
 	}
 
 
