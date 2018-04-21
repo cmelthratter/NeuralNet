@@ -18,7 +18,6 @@ namespace MatrixUtil {
 		Matrix(int rows, int columns);
 		Matrix();
 		Matrix(Matrix<T>& matrix);
-
 		int getColumns() const;
 
 		int getRows() const;
@@ -33,6 +32,7 @@ namespace MatrixUtil {
 
 
 		void addRow(const vector<T> row);
+		Matrix<T> transpose();
 
 
 		
@@ -49,8 +49,7 @@ namespace MatrixUtil {
 	template <typename T> class MatrixManipulation {
 	public:
 
-		Matrix<T>& transpose();
-
+		
 		friend ostream& operator<< <>(ostream& os, Matrix<T>& operand);
 
 	private:

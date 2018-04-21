@@ -29,7 +29,7 @@ Matrix<T>::Matrix(Matrix<T>& matrix) : values(matrix.getData()) , mRows(matrix.g
 }
 
 template <typename T>
-Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand) 
+Matrix<T> Matrix<T>::operator*(Matrix<T>& operand) 
 {
 	if(this->getColumns() != operand.getRows())  
 	{
@@ -48,10 +48,8 @@ Matrix<T>  Matrix<T>::operator*(Matrix<T>& operand)
 			{
 				sum += this->values[i][k] * operand[k][j];
 			}
-
 			newData[i][j] = sum;
 		}
-		
 	}
 	Matrix<T> newMatrix(newData);
 	return newMatrix;
@@ -116,14 +114,15 @@ int Matrix<T>::getColumns() const
 
 
 template <typename T>
-Matrix<T>& MatrixManipulation<T>::transpose() 
+Matrix<T> Matrix<T>::transpose() 
 {
-	vector<vector<T> > matrix;
-	for (int i = 0; i < this.getRows(); i++) {
-		for (int j = 0; j < this.getColumns(); j++) {
-			matrix[j][i] = this[i][j];
+	vector<vector<T> > matrix(this->getColumns(), vector<T>(this->getRows()));
+
+	for (int i = 0; i < this->getRows(); i++) {
+		for (int j = 0; j < this->getColumns(); j++) {
+			matrix[j][i] = this->values[i][j];
 		}
 	}
-
-	return new Matrix<T>(matrix);
+	Matrix<T> newMatrix(matrix);
+	return newMatrix;
 }
